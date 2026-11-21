@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What's in the Sack? · Snowballs Week 3</title>
+<style>
+:root{--navy:#1F3A5F;--blue:#4A90C2;--red:#D9483B;--yellow:#F2B84B;--snow:#F4F8FC;--ink:#1F2A37}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic",Calibri,sans-serif;background:linear-gradient(180deg,#DCEBF7 0%,var(--snow) 70%);color:var(--ink);overflow-x:hidden;-webkit-tap-highlight-color:transparent}
+header{background:var(--navy);color:#fff;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+header h1{font-family:Cambria,Georgia,serif;font-size:clamp(20px,2.6vw,34px);letter-spacing:.5px}
+header .sub{font-size:clamp(12px,1.2vw,16px);opacity:.85}
+.progress{display:flex;gap:6px}
+.progress span{width:clamp(14px,1.6vw,22px);height:clamp(14px,1.6vw,22px);border-radius:50%;background:rgba(255,255,255,.25);display:grid;place-items:center;font-size:11px;transition:.3s}
+.progress span.on{background:var(--yellow)}
+main{display:grid;grid-template-columns:1fr 1.1fr;gap:16px;padding:16px;max-width:1500px;margin:0 auto;min-height:calc(100vh - 120px)}
+@media(max-width:899px){main{grid-template-columns:1fr;padding:12px 16px}}
+.panel{background:#fff;border-radius:22px;box-shadow:0 6px 20px rgba(31,58,95,.12);padding:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;position:relative}
+/* sack */
+.sack-btn{border:none;background:none;cursor:pointer;font-size:clamp(110px,14vw,200px);line-height:1;filter:drop-shadow(0 8px 10px rgba(0,0,0,.18));transition:transform .2s}
+.sack-btn:hover{transform:scale(1.05)}
+.sack-btn.shake{animation:shake .6s}
+.sack-btn.pulse{animation:pulse 1.6s infinite}
+@keyframes shake{0%,100%{transform:rotate(0)}20%{transform:rotate(-14deg)}40%{transform:rotate(12deg)}60%{transform:rotate(-8deg)}80%{transform:rotate(6deg)}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+.ask{font-family:Cambria,Georgia,serif;font-size:clamp(22px,2.6vw,38px);color:var(--navy);text-align:center}
+.ask small{display:block;font-family:inherit;font-size:clamp(13px,1.2vw,17px);color:#6b7a8c;margin-top:4px}
+.reveal{min-height:clamp(120px,14vw,190px);display:flex;flex-direction:column;align-items:center;justify-content:center}
+.reveal .em{font-size:clamp(70px,8vw,120px);line-height:1;animation:pop .5s cubic-bezier(.3,1.6,.5,1)}
+.reveal .w{font-family:Cambria,Georgia,serif;font-size:clamp(30px,3.6vw,54px);font-weight:700;color:var(--red);cursor:pointer}
+@keyframes pop{0%{transform:scale(0) translateY(40px);opacity:0}100%{transform:scale(1);opacity:1}}
+.sentence{width:100%;background:#FFF6E3;border:3px dashed var(--yellow);border-radius:16px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:76px}
+.sentence .en{font-size:clamp(18px,2.1vw,30px);font-weight:700;color:var(--navy)}
+.sentence .en b{color:var(--red)}
+.sentence .kr{font-size:clamp(12px,1.1vw,15px);color:#7a6a45;margin-top:2px}
+.btn{border:none;border-radius:999px;padding:10px 18px;font-size:clamp(14px,1.3vw,18px);font-weight:700;cursor:pointer;color:#fff;background:var(--blue);box-shadow:0 3px 0 rgba(0,0,0,.15);white-space:nowrap}
+.btn:active{transform:translateY(2px);box-shadow:none}
+.btn.sun{background:#F59E0B;font-size:clamp(16px,1.6vw,22px);padding:12px 22px}
+.btn.reset{background:#8795A8}
+.btn.say{background:var(--red)}
+.controls{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+/* snowman stage */
+.stage{position:relative;width:min(100%,460px);aspect-ratio:3/4}
+.stage svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+#body{transform-origin:50% 92%;transition:transform 2.6s ease-in,opacity 2.6s}
+.melting #body{transform:scaleY(.08) scaleX(1.25);opacity:.25}
+#puddle{transform-origin:50% 50%;transform:scale(0);transition:transform 2.6s ease-in}
+.melting #puddle{transform:scale(1)}
+.deco{position:absolute;transform:translate(-50%,-50%) scale(0);font-size:clamp(28px,3.6vw,50px);line-height:1;transition:transform .55s cubic-bezier(.3,1.6,.5,1),top 2.4s ease-in,opacity 2.4s;pointer-events:none}
+.deco.on{transform:translate(-50%,-50%) scale(1)}
+.melting .deco.on{top:93%!important;opacity:.0}
+.sun-icon{position:absolute;top:-4%;right:-2%;font-size:clamp(50px,6vw,90px);opacity:0;transform:scale(.3) rotate(-40deg);transition:1s}
+.melting .sun-icon{opacity:1;transform:scale(1) rotate(0)}
+.bye{position:absolute;bottom:2%;left:50%;transform:translateX(-50%);font-family:Cambria,Georgia,serif;font-size:clamp(22px,2.8vw,40px);color:var(--navy);font-weight:700;opacity:0;transition:opacity .8s 2.4s;white-space:nowrap;cursor:pointer}
+.melting .bye{opacity:1}
+.stars{position:absolute;inset:0;pointer-events:none}
+.star{position:absolute;font-size:24px;animation:fly 1s ease-out forwards}
+@keyframes fly{0%{opacity:1;transform:translate(0,0) scale(.5)}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(1.3)}}
+.hint{text-align:center;font-size:13px;color:#6b7a8c;padding:6px 16px 14px}
+.hint kbd{background:#fff;border:1px solid #cbd5e1;border-radius:5px;padding:1px 6px;font-size:12px}
+@media(max-width:899px){.hint .pc{display:none}}
+</style></head>
+<body>
+<header>
+  <div><h1>❄️ What's in the Sack?</h1><div class="sub">Snowballs · Day 3: Story &amp; Expression · 에릭칼아트잉글리쉬 동탄기산</div></div>
+  <div class="progress" id="progress"></div>
+</header>
+<main>
+  <section class="panel">
+    <div class="ask" id="ask">What's in the sack?<small>자루를 눌러 보세요!</small></div>
+    <button class="sack-btn pulse" id="sack" aria-label="자루 열기"><svg viewBox="0 0 200 220" style="width:clamp(130px,15vw,220px);height:auto;display:block">
+      <path d="M70 60 Q30 110 32 160 Q34 210 100 212 Q166 210 168 160 Q170 110 130 60 Z" fill="#C8955C" stroke="#8A5A2B" stroke-width="5"/>
+      <path d="M62 30 Q100 52 138 30 L130 62 Q100 72 70 62 Z" fill="#B9844C" stroke="#8A5A2B" stroke-width="5" stroke-linejoin="round"/>
+      <path d="M66 62 Q100 74 134 62" stroke="#D9483B" stroke-width="9" fill="none" stroke-linecap="round"/>
+      <path d="M60 130 Q75 140 70 155 M140 120 Q128 135 138 150 M95 170 Q100 182 110 176" stroke="#A9743F" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <text x="100" y="155" text-anchor="middle" font-size="44" font-family="Cambria,Georgia,serif" font-weight="700" fill="#6B4320">?</text>
+    </svg></button>
+    <div class="reveal" id="reveal"></div>
+    <div class="sentence" id="sentence" style="visibility:hidden">
+      <div><div class="en" id="sEn"></div><div class="kr" id="sKr"></div></div>
+      <button class="btn say" id="sayBtn">🔊</button>
+    </div>
+  </section>
+  <section class="panel">
+    <div class="stage" id="stage">
+      <svg viewBox="0 0 300 400" aria-hidden="true">
+        <ellipse id="puddle" cx="150" cy="372" rx="130" ry="22" fill="#9CCBEA" opacity=".85"/>
+        <g id="body">
+          <circle cx="150" cy="300" r="78" fill="#fff" stroke="#BFD6EA" stroke-width="4"/>
+          <circle cx="150" cy="185" r="58" fill="#fff" stroke="#BFD6EA" stroke-width="4"/>
+          <circle cx="150" cy="92" r="44" fill="#fff" stroke="#BFD6EA" stroke-width="4"/>
+          <circle cx="135" cy="84" r="5" fill="#1F2A37"/><circle cx="165" cy="84" r="5" fill="#1F2A37"/>
+          <path d="M132 108 Q150 120 168 108" stroke="#1F2A37" stroke-width="4" fill="none" stroke-linecap="round"/>
+        </g>
+      </svg>
+      <div id="decos"></div>
+      <div class="sun-icon">☀️</div>
+      <div class="bye" id="bye">So long, snowball! 👋</div>
+      <div class="stars" id="stars"></div>
+    </div>
+    <div class="controls">
+      <button class="btn sun" id="sunBtn" style="display:none">☀️ Here comes the sun!</button>
+      <button class="btn reset" id="resetBtn">↺ 다시</button>
+    </div>
+  </section>
+</main>
+<div class="hint"><span class="pc"><kbd>Space</kbd> 자루 열기 · <kbd>S</kbd> 해님 · <kbd>R</kbd> 다시 · <kbd>F</kbd> 전체화면 · </span>단어·문장을 누르면 소리가 나요</div>
+<script>
+let audioCtx,unlocked=false;
+function unlockAudio(){if(unlocked)return;try{audioCtx=new(window.AudioContext||window.webkitAudioContext)();const b=audioCtx.createBuffer(1,1,22050);const s=audioCtx.createBufferSource();s.buffer=b;s.connect(audioCtx.destination);s.start(0);audioCtx.resume();unlocked=true;}catch(e){}}
+document.addEventListener('touchstart',unlockAudio,{once:true});document.addEventListener('click',unlockAudio,{once:true});
+function speak(t){if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume();const u=new SpeechSynthesisUtterance(t);u.lang='en-US';u.rate=0.85;speechSynthesis.cancel();speechSynthesis.speak(u);}
+
+// x,y = % position on snowman stage
+const ITEMS=[
+ {id:'hat',em:'🎩',word:'a hat',kr:'모자',ro:'모자로',x:50,y:9,size:1.25},
+ {id:'carrot',em:'🥕',word:'a carrot',kr:'당근',ro:'당근으로',x:52,y:24.5,size:.7},
+ {id:'scarf',em:'🧣',word:'a scarf',kr:'목도리',ro:'목도리로',x:50,y:36,size:1.1},
+ {id:'buttons',em:'🔘',word:'buttons',kr:'단추',ro:'단추로',multi:[[50,42],[50,49],[50,56]],size:.6},
+ {id:'leaves',em:'🍂',word:'leaves',kr:'나뭇잎',ro:'나뭇잎으로',multi:[[21,40],[79,40]],size:1.05},
+ {id:'mittens',em:'🧤',word:'mittens',kr:'장갑',ro:'장갑으로',multi:[[12,33],[88,33]],size:.85}
+];
+let order=[],idx=0,busy=false,melted=false,current=null;
+const $=id=>document.getElementById(id);
+const stage=$('stage'),decos=$('decos'),sack=$('sack');
+
+function buildDecos(){
+  decos.innerHTML='';
+  ITEMS.forEach(it=>{
+    (it.multi||[[it.x,it.y]]).forEach(([x,y])=>{
+      const d=document.createElement('div');d.className='deco';d.dataset.id=it.id;d.textContent=it.em;
+      d.style.left=x+'%';d.style.top=y+'%';d.style.fontSize=`calc(clamp(28px,3.6vw,50px)*${it.size})`;
+      if(it.rot)d.style.rotate=it.rot+'deg';
+      decos.appendChild(d);
+    });
+  });
+}
+function buildProgress(){
+  $('progress').innerHTML=ITEMS.map((_,i)=>`<span class="${i<idx?'on':''}">${i<idx?'✓':''}</span>`).join('');
+}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+function openSack(){
+  if(busy||melted||idx>=ITEMS.length)return;
+  busy=true;sack.classList.remove('pulse');sack.classList.add('shake');
+  speak("What's in the sack?");
+  setTimeout(()=>{
+    sack.classList.remove('shake');
+    current=order[idx];
+    $('reveal').innerHTML=`<div class="em">${current.em}</div><div class="w" id="wordTap">${current.word.replace(/^a /,'')}</div><div style="color:#6b7a8c;font-size:clamp(13px,1.2vw,17px)">${current.kr}</div>`;
+    $('wordTap').onclick=()=>speak(current.word.replace(/^a /,''));
+    speak(current.word.replace(/^a /,''));
+    setTimeout(()=>{
+      decos.querySelectorAll(`[data-id="${current.id}"]`).forEach(d=>d.classList.add('on'));
+      burst();
+      $('sEn').innerHTML=`We made a snowman using <b>${current.word}</b>.`;
+      $('sKr').textContent=`우리는 ${current.ro} 눈사람을 만들었어요.`;
+      $('sentence').style.visibility='visible';
+      speak(`We made a snowman using ${current.word}.`);
+      idx++;buildProgress();
+      if(idx>=ITEMS.length){
+        $('ask').innerHTML='Our snowman is ready!<small>눈사람 완성! 이제 해님이 나와요 ☀️</small>';
+        sack.style.opacity=.35;$('sunBtn').style.display='';
+      }else{
+        $('ask').innerHTML='What\'s in the sack?<small>한 번 더 눌러 보세요!</small>';
+        sack.classList.add('pulse');
+      }
+      busy=false;
+    },1100);
+  },650);
+}
+function burst(){
+  const s=$('stars');
+  for(let i=0;i<10;i++){const e=document.createElement('div');e.className='star';e.textContent=['✨','❄️','⭐'][i%3];
+    e.style.left='50%';e.style.top='45%';e.style.setProperty('--dx',(Math.random()*260-130)+'px');e.style.setProperty('--dy',(Math.random()*260-130)+'px');
+    s.appendChild(e);setTimeout(()=>e.remove(),1000);}
+}
+function melt(){
+  if(melted||idx<ITEMS.length)return;
+  melted=true;stage.classList.add('melting');$('sunBtn').style.display='none';
+  $('ask').innerHTML='Oh no! It melts!<small>해가 나와서 눈사람이 녹아요…</small>';
+  $('reveal').innerHTML='<div class="em">💧</div><div class="w" id="pTap">puddle</div><div style="color:#6b7a8c">물웅덩이</div>';
+  $('pTap').onclick=()=>speak('puddle');
+  $('sEn').innerHTML='The snowman <b>melts</b>.';$('sKr').textContent='눈사람이 녹아요.';
+  speak('Oh no! The snowman melts.');
+  setTimeout(()=>{speak('So long, snowball!');$('sEn').innerHTML='<b>So long</b>, snowball!';$('sKr').textContent='안녕, 눈덩이야!';},3000);
+}
+function reset(){
+  speechSynthesis.cancel();
+  order=shuffle([...ITEMS]);idx=0;busy=false;melted=false;current=null;
+  stage.classList.remove('melting');buildDecos();buildProgress();
+  $('reveal').innerHTML='';$('sentence').style.visibility='hidden';$('sunBtn').style.display='none';
+  sack.style.opacity=1;sack.classList.add('pulse');
+  $('ask').innerHTML='What\'s in the sack?<small>자루를 눌러 보세요!</small>';
+}
+sack.onclick=openSack;
+$('sunBtn').onclick=melt;
+$('resetBtn').onclick=reset;
+$('sayBtn').onclick=()=>speak($('sEn').textContent);
+$('bye').onclick=()=>speak('So long, snowball!');
+document.addEventListener('keydown',e=>{
+  if(e.code==='Space'){e.preventDefault();openSack();}
+  else if(e.key==='s'||e.key==='S')melt();
+  else if(e.key==='r'||e.key==='R')reset();
+  else if(e.key==='f'||e.key==='F'){document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen().catch(()=>{});}
+});
+reset();
+</script>
+</body></html>
